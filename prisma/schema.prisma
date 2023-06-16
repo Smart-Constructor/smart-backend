@@ -25,7 +25,7 @@ model Sessions {
   userId    Int
   token     String
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @default(now())
   Users     Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -36,17 +36,17 @@ model Units {
   estimated   DateTime
   concludedAt DateTime
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime  @default(now())
   Reports     Reports[]
 }
 
 model Users {
   id        Int        @id @default(autoincrement())
-  userName  String
+  cpf       String        @unique
   password  String     @db.VarChar(255)
   email     String     @unique @db.VarChar(255)
   createdAt DateTime   @default(now())
-  updatedAt DateTime
+  updatedAt DateTime   @default(now())
   Reports   Reports[]
   Sessions  Sessions[]
 }

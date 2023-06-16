@@ -10,11 +10,12 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const prisma_module_1 = require("./prisma/prisma.module");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, users_module_1.UsersModule],
+        imports: [auth_module_1.AuthModule, users_module_1.UsersModule, prisma_module_1.PrismaModule],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

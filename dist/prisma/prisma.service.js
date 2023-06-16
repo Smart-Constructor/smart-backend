@@ -9,31 +9,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthService = void 0;
+exports.PrismaService = void 0;
 const common_1 = require("@nestjs/common");
-const bcrypt = require("bcrypt");
-const prisma_service_1 = require("../prisma/prisma.service");
-let AuthService = exports.AuthService = class AuthService {
-    constructor(prisma) {
-        this.prisma = prisma;
-    }
-    async signup(dto) {
-        const password = dto.password;
-        const cpf = dto.cpf;
-        const email = dto.email;
-        const hash = await bcrypt.hash(password, 10);
-        const user = await this.prisma.users.create({
-            data: {
-                cpf,
-                email,
-                password: hash,
+const client_1 = require("@prisma/client");
+let PrismaService = exports.PrismaService = class PrismaService extends client_1.PrismaClient {
+    constructor() {
+        super({
+            datasources: {
+                db: {
+                    url: "postgresql://postgres:senhasecreta@localhost:5432/obrasmart?schema=public",
+                },
             },
         });
-        return user;
     }
 };
-exports.AuthService = AuthService = __decorate([
+exports.PrismaService = PrismaService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
-], AuthService);
-//# sourceMappingURL=auth.service.js.map
+    __metadata("design:paramtypes", [])
+], PrismaService);
+//# sourceMappingURL=prisma.service.js.map
