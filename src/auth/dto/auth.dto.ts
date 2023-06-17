@@ -6,7 +6,7 @@ import {
 } from "class-validator";
 import { IsCPF } from "class-validator-cpf";
 
-export class AuhtDto {
+export class AuhtDtoSignup {
   @IsEmail()
    @IsNotEmpty()
   email: string;
@@ -18,5 +18,15 @@ export class AuhtDto {
   @IsString()
    @IsNotEmpty()
    @IsStrongPassword()
+  password: string;
+}
+
+export class AuhtDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
   password: string;
 }

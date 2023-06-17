@@ -9,9 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuhtDto = void 0;
+exports.AuhtDto = exports.AuhtDtoSignup = void 0;
 const class_validator_1 = require("class-validator");
 const class_validator_cpf_1 = require("class-validator-cpf");
+class AuhtDtoSignup {
+}
+exports.AuhtDtoSignup = AuhtDtoSignup;
+__decorate([
+    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AuhtDtoSignup.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_cpf_1.IsCPF)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], AuhtDtoSignup.prototype, "cpf", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsStrongPassword)(),
+    __metadata("design:type", String)
+], AuhtDtoSignup.prototype, "password", void 0);
 class AuhtDto {
 }
 exports.AuhtDto = AuhtDto;
@@ -21,14 +40,8 @@ __decorate([
     __metadata("design:type", String)
 ], AuhtDto.prototype, "email", void 0);
 __decorate([
-    (0, class_validator_cpf_1.IsCPF)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], AuhtDto.prototype, "cpf", void 0);
-__decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsStrongPassword)(),
     __metadata("design:type", String)
 ], AuhtDto.prototype, "password", void 0);
 //# sourceMappingURL=auth.dto.js.map

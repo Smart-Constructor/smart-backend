@@ -1,7 +1,8 @@
 import { AuthService } from './auth.service';
-import { AuhtDto } from './dto';
+import { AuhtDto, AuhtDtoSignup } from './dto';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
-    signup(dto: AuhtDto): Promise<import(".prisma/client").Users>;
+    signup(dto: AuhtDtoSignup): Promise<import(".prisma/client").Users>;
+    signin(dto: AuhtDto): Promise<import(".prisma/client").Sessions>;
 }

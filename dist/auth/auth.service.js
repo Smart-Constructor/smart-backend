@@ -13,27 +13,75 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const bcrypt = require("bcrypt");
 const prisma_service_1 = require("../prisma/prisma.service");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 let AuthService = exports.AuthService = class AuthService {
-    constructor(prisma) {
+    constructor(prisma, jwt, config) {
         this.prisma = prisma;
+        this.jwt = jwt;
+        this.config = config;
     }
     async signup(dto) {
         const password = dto.password;
         const cpf = dto.cpf;
         const email = dto.email;
         const hash = await bcrypt.hash(password, 10);
-        const user = await this.prisma.users.create({
-            data: {
-                cpf,
+        try {
+            const user = await this.prisma.users.create({
+                data: {
+                    cpf,
+                    email,
+                    password: hash,
+                },
+            });
+            return user;
+        }
+        catch (error) {
+            if (error.code === "P2002") {
+                throw new common_1.ForbiddenException("Credentials taken");
+            }
+            throw error;
+        }
+    }
+    async singin(dto) {
+        const email = dto.email;
+        const password = dto.password;
+        const user = await this.prisma.users.findUnique({
+            where: {
                 email,
-                password: hash,
             },
         });
-        return user;
+        if (!user)
+            throw new common_1.ForbiddenException('Credentials not found');
+        const pwMatches = await bcrypt.compare(password, user.password);
+        if (!pwMatches)
+            throw new common_1.ForbiddenException('Credentials are not valid');
+        const token = await this.signinToken(user.id, user.email);
+        const session = await this.prisma.sessions.create({
+            data: {
+                userId: user.id,
+                token: token.access_token,
+            }
+        });
+        return session;
+    }
+    async signinToken(userId, email) {
+        const payload = {
+            sub: userId,
+            email,
+        };
+        const secret = this.config.get('JWT_SECRET_KEY');
+        const token = await this.jwt.signAsync(payload, {
+            expiresIn: '30m',
+            secret: secret,
+        });
+        return { access_token: token };
     }
 };
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        jwt_1.JwtService,
+        config_1.ConfigService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
