@@ -8,16 +8,16 @@ import { IsCPF } from "class-validator-cpf";
 
 export class AuhtDtoSignup {
   @IsEmail()
-   @IsNotEmpty()
+  @IsNotEmpty()
   email: string;
 
   @IsCPF()
-   @IsNotEmpty()
+  @IsNotEmpty()
   cpf: string;
 
   @IsString()
-   @IsNotEmpty()
-   @IsStrongPassword()
+  @IsNotEmpty()
+  @IsStrongPassword()
   password: string;
 }
 

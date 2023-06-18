@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 import { AuhtDto, AuhtDtoSignup } from "./dto";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "src/prisma/prisma.service";
@@ -32,7 +37,16 @@ export class AuthService {
       return user;
     } catch (error) {
       if (error.code === "P2002") {
-        throw new ForbiddenException("Credentials taken");
+        throw new HttpException(
+          {
+            status: HttpStatus.CONFLICT,
+            error: "User already exists",
+          },
+          HttpStatus.CONFLICT,
+          {
+            cause: error,
+          }
+        );
       }
       throw error;
     }
@@ -48,40 +62,63 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new ForbiddenException('Credentials not found');
+    if (!user)
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "User not found",
+        },
+        HttpStatus.BAD_REQUEST
+      );
 
     const pwMatches = await bcrypt.compare(password, user.password);
 
-    if (!pwMatches) throw new ForbiddenException('Credentials are not valid');
+    if (!pwMatches)
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: "Credentials are not valid",
+        },
+        HttpStatus.BAD_REQUEST
+      );
 
     const token = await this.signinToken(user.id, user.email);
-    
+
     const session = await this.prisma.sessions.create({
-      data:{
+      data: {
         userId: user.id,
         token: token.access_token,
-      }
-    })
+      },
+    });
 
-    return session
+    if (!session)
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: "Internal server error, please try again later",
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+
+    return token;
   }
 
-  async signinToken (userId: number, email: string) : Promise<{access_token: string}> {
+  async signinToken(
+    userId: number,
+    email: string
+  ): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
-    }
+    };
 
-    const secret = this.config.get('JWT_SECRET_KEY');
+    const secret = this.config.get("JWT_SECRET_KEY");
 
-    const token = await this.jwt.signAsync(
-      payload,
-      {
-        expiresIn: '30m',
-        secret: secret,
-      }
-    )
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: "30m",
+      secret: secret,
+    });
 
-    return {access_token: token}
+    return { access_token: token };
   }
 }
