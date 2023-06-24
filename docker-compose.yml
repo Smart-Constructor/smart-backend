@@ -6,11 +6,12 @@ services:
     ports:
       - 5433:5432
     env_file:
-      - ./.env
+      - .env
     volumes:
       - postgres-volume:/var/lib/postgresql/data
 
   node:
+    restart: always
     container_name: node
     build: ./
     ports:
@@ -18,7 +19,7 @@ services:
     depends_on:
       - postgres
     env_file:
-      - ./.env
+      - .env
 
 volumes:
   postgres-volume:
